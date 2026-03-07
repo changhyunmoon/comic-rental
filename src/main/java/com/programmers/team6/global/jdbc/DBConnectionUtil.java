@@ -11,14 +11,15 @@ import static com.programmers.team6.global.jdbc.ConnectionConst.*;
 public class DBConnectionUtil {
 
     //connection util
-    public static Connection getConnection()  {
+    public static Connection getConnection() throws SQLException{
         try {
             Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
             log.info("get connection={}, class={}", connection, connection.getClass());
             return connection;
 
         } catch (SQLException e) {
-            throw new IllegalArgumentException(e);
+            System.err.println("[Error] Connection 획득 실패: " + e.getMessage());
+            throw e;
         }
     }
 

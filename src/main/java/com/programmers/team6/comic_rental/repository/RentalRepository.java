@@ -32,17 +32,20 @@ public class RentalRepository {
             pstmt.setLong(5, rental.getComicId());
             pstmt.setLong(6, rental.getMemberId());
 
-            pstmt.executeUpdate();
+            int savedRows = pstmt.executeUpdate();
+
+            if (savedRows == 0) {
+                throw new SQLException("[Error] Rental 저장 실패");
+            }
+
             return rental;
 
         } catch (SQLException e) {
-            // 로거 대신 표준 에러 출력 사용
             System.err.println("[Error] Rental 저장 중 DB 오류 발생: " + e.getMessage());
             e.printStackTrace();
             throw e;
 
         } finally {
-            // 리소스 반납
             close(con, pstmt, null);
         }
     }

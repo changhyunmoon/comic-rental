@@ -11,7 +11,7 @@ public class RentalService {
     RentalRepository rentalRepository = new RentalRepository();
 
     // 만화책 대여
-    public void rentBook(Long memberId, Long comicId) throws SQLException {
+    public Rental rentBook(Long memberId, Long comicId) throws SQLException {
 
         //검증 로직 (아직 member, comic 구현이 안되어 있어 나중에 추가)
         //ex) comic 테이블에서 해당 만화택이 빌릴 수 있는지
@@ -27,7 +27,8 @@ public class RentalService {
         rentalRepository.save(rental);
 
         System.out.println("[Service] 대여 정보 저장 완료: 회원 " + memberId + ", 도서 " + comicId);
+
+        // [수정] 저장된(확정된 데이터가 담긴) 엔티티 객체 반환
+        return rental;
     }
-
-
 }

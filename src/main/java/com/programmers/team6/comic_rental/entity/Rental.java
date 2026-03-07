@@ -52,7 +52,7 @@ public class Rental {
     @Override
     public String toString() {
         return "Rental{" +
-                ", rentDate=" + rentDate +
+                " rentDate=" + rentDate +
                 ", returnDate=" + returnDate +
                 ", comicId=" + comicId +
                 ", memberId=" + memberId +
