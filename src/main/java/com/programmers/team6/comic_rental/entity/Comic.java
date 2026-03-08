@@ -1,4 +1,4 @@
-package main.java.com.programmers.team6.comic_rental.entity;
+package com.programmers.team6.comic_rental.entity;
 
 import java.time.LocalDateTime;
 

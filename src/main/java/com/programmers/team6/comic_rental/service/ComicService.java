@@ -1,7 +1,7 @@
-package main.java.com.programmers.team6.comic_rental.service;
+package com.programmers.team6.comic_rental.service;
 
-import main.java.com.programmers.team6.comic_rental.entity.Comic;
-import main.java.com.programmers.team6.comic_rental.repository.ComicRepository;
+import com.programmers.team6.comic_rental.entity.Comic;
+import com.programmers.team6.comic_rental.repository.ComicRepository;
 
 import java.util.List;
 

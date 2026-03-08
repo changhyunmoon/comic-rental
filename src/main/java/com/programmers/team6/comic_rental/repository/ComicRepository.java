@@ -1,6 +1,6 @@
-package main.java.com.programmers.team6.comic_rental.repository;
+package com.programmers.team6.comic_rental.repository;
 
-import main.java.com.programmers.team6.comic_rental.entity.Comic;
+import com.programmers.team6.comic_rental.entity.Comic;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -8,17 +8,10 @@ import java.util.List;
 
 public class ComicRepository {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/comic_rental?serverTimezone=Asia/Seoul";
+    private static final String URL =
+            "jdbc:mysql://localhost:3306/comic_rental?serverTimezone=Asia/Seoul";
     private static final String USER = "root";
     private static final String PASSWORD = "1234";
-
-    static {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("MySQL JDBC 드라이버를 찾을 수 없습니다.", e);
-        }
-    }
 
     private Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USER, PASSWORD);
@@ -51,7 +44,7 @@ public class ComicRepository {
             throw new SQLException("생성된 comic_id를 가져오지 못했습니다.");
 
         } catch (SQLException e) {
-            throw new RuntimeException("save 오류", e);
+            throw new RuntimeException("save 오류" + e.getMessage(), e);
         }
     }
 
