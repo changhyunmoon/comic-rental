@@ -2,6 +2,10 @@ package com.programmers.team6.comic_rental;
 
 import java.util.Scanner;
 
+import com.programmers.team6.comic_rental.controller.ComicController;
+import com.programmers.team6.comic_rental.repository.ComicRepository;
+import com.programmers.team6.comic_rental.service.ComicService;
+
 /*
     명령어	        switch case
     ==========================================
@@ -21,10 +25,19 @@ import java.util.Scanner;
 public class App {
     Scanner sc = new Scanner(System.in);
 
+    ComicRepository comicRepository = new ComicRepository();
+    ComicService comicService = new ComicService(comicRepository);
+    ComicController comicController = new ComicController(sc, comicService);
+
     public void run() {   // run 루프
         while (true) {
             System.out.print("명령어: ");
             String cmd = sc.nextLine();
+
+            if (cmd.isEmpty()) {
+                System.out.println("명령어를 입력해주세요.");
+                continue;
+            }
 
             Rq rq = new Rq(cmd);        // 명령어 파싱 객체
 
@@ -32,23 +45,35 @@ public class App {
 
                 // 만화책
                 case "comic-add":
-
+                    comicController.addComic();
                     break;
 
                 case "comic-list":
-
+                    comicController.listComics();
                     break;
 
                 case "comic-detail":
-
+                    if (rq.getComicId() == 0) {
+                        System.out.println("사용법: comic-detail [id]");
+                        break;
+                    }
+                    comicController.detailComic(rq.getComicId());
                     break;
 
                 case "comic-update":
-
+                    if (rq.getComicId() == 0) {
+                        System.out.println("사용법: comic-update [id]");
+                        break;
+                    }
+                    comicController.updateComic(rq.getComicId());
                     break;
 
                 case "comic-delete":
-
+                    if (rq.getComicId() == 0) {
+                        System.out.println("사용법: comic-delete [id]");
+                        break;
+                    }
+                    comicController.deleteComic(rq.getComicId());
                     break;
 
                 // 회원
