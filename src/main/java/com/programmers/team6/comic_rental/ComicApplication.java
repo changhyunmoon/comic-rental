@@ -7,7 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ComicApplication {
 
 	public static void main(String[] args) {
-
+		App app = new App();
+		app.run();
 	}
 
 }
