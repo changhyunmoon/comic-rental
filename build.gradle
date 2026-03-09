@@ -10,7 +10,7 @@ description = 'Comic Book Rental Management System for Programmers Bootcamp Team
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
+		languageVersion = JavaLanguageVersion.of(17)
 	}
 }
 
