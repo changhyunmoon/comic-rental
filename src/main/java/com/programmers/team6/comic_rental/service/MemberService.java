@@ -1,6 +1,9 @@
 package com.programmers.team6.comic_rental.service;
 
+import com.programmers.team6.comic_rental.entity.Member;
 import com.programmers.team6.comic_rental.repository.MemberRepository;
+
+import java.util.List;
 
 public class MemberService {
     private MemberRepository memberRepository = new MemberRepository();
@@ -16,5 +19,9 @@ public class MemberService {
 
         // 3. 모든 통과 시 저장
         return memberRepository.save(name, phone);
+    }
+
+    public List<Member> findAll() {
+        return memberRepository.findAll();
     }
 }

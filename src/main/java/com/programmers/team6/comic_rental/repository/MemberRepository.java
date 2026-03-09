@@ -4,6 +4,8 @@ import com.mysql.cj.x.protobuf.MysqlxPrepare;
 import com.programmers.team6.comic_rental.entity.Member;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MemberRepository {
     private static final String URL = "jdbc:mysql://localhost:3306/comic_rental";
@@ -15,11 +17,11 @@ public class MemberRepository {
 
     // 회원 등록
     public long save(String name, String phone) {
-        String sql = "INSERT INTO member (name, phoneNumber, createDate)" +
-                "VALUES (?, ?, NOW())";
+        String sql = "INSERT INTO member (name, phoneNumber, createDate, updateDate)" +
+                "VALUES (?, ?, NOW(), NOW())";
 
         try(Connection conn = getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
+            PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
             pstmt.setString(1, name);
             pstmt.setString(2, phone);
 
@@ -41,7 +43,7 @@ public class MemberRepository {
     public void findById(long id){
         String sql = "SELECT * FROM member WHERE user_id = ?";
         try(Connection conn = getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)){
+            PreparedStatement pstmt = conn.prepareStatement(sql)){
             pstmt.setLong(1, id);
 
             try(ResultSet rs = pstmt.executeQuery()){
@@ -53,6 +55,36 @@ public class MemberRepository {
             System.out.println("에러 발생 : " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    // 전체 회원 조회
+    public List<Member> findAll() {
+        String sql = "SELECT * FROM member";
+
+        List<Member> members = new ArrayList<>();
+
+        try(Connection conn = getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql)){
+            ResultSet rs = pstmt.executeQuery();
+
+            while(rs.next()){
+                long id = rs.getLong("member_id");
+                String name = rs.getString("name");
+                String phone = rs.getString("phoneNumber");
+                String createDate = rs.getTimestamp("createDate").toString();
+
+                Member member = new Member();
+                member.setId(id);
+                member.setName(name);;
+                member.setPhone(phone);
+                member.setCreateDate(createDate);
+
+                members.add(member);
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return members;
     }
 
     // 회원정보 업데이트
