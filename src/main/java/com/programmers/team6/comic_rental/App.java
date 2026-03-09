@@ -3,6 +3,7 @@ package com.programmers.team6.comic_rental;
 import java.util.Scanner;
 
 import com.programmers.team6.comic_rental.controller.ComicController;
+import com.programmers.team6.comic_rental.controller.MemberController;
 import com.programmers.team6.comic_rental.repository.ComicRepository;
 import com.programmers.team6.comic_rental.service.ComicService;
 
@@ -28,6 +29,7 @@ public class App {
     ComicRepository comicRepository = new ComicRepository();
     ComicService comicService = new ComicService(comicRepository);
     ComicController comicController = new ComicController(sc, comicService);
+    MemberController memberController = new MemberController(sc);
 
     public void run() {   // run 루프
         while (true) {
@@ -78,7 +80,7 @@ public class App {
 
                 // 회원
                 case "member-add":
-
+                    memberController.addMember();
                     break;
 
                 case "member-list":
