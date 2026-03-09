@@ -18,12 +18,30 @@ repositories {
 	mavenCentral()
 }
 
+// 자바 컴파일 시 UTF-8 인코딩 사용
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+// 애플리케이션 실행(main) 시 JVM 인코딩을 UTF-8로 강제
+tasks.withType(JavaExec).configureEach {
+    jvmArgs = ["-Dfile.encoding=UTF-8", "-Dsun.stdout.encoding=UTF-8", "-Dsun.stderr.encoding=UTF-8"]
+}
+
 dependencies {
 	implementation 'com.mysql:mysql-connector-j:8.4.0'
 	testImplementation 'org.junit.jupiter:junit-jupiter'
 	implementation 'org.springframework.boot:spring-boot-starter'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // 1. MySQL 커넥터 (자바와 DB를 연결해주는 핵심 라이브러리)
+    implementation 'com.mysql:mysql-connector-j:8.3.0'
+
+    // 2. Lombok (Getter, Setter, 생성자 등을 자동으로 만들어줌 - 팀원들과 상의 후 추가)
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+
 }
 
 tasks.named('test') {
