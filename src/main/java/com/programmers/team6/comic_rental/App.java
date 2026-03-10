@@ -84,7 +84,7 @@ public class App {
                     break;
 
                 case "member-list":
-
+                    memberController.findAllMembers();
                     break;
 
                 // 대여

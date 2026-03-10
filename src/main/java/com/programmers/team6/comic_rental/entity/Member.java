@@ -1,21 +1,21 @@
 package com.programmers.team6.comic_rental.entity;
 
 public class Member {
-    int id;
+    Long id;
     String name;
     String phone;// 선택
-    String regDate;// yyyy-MM-dd
+    String createDate;// yyyy-MM-dd
 
     public Member(){}
 
-    public Member(int id, String name, String phone, String regDate){
+    public Member(Long id, String name, String phone, String createDate){
         this.id = id;
         this.name = name;
         this.phone = phone;
-        this.regDate = regDate;
+        this.createDate = createDate;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -27,16 +27,16 @@ public class Member {
         this.phone = phone;
     }
 
-    public void setRegDate(String regDate) {
-        this.regDate = regDate;
+    public void setCreateDate(String createDate) {
+        this.createDate = createDate;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public String getRegDate() {
-        return regDate;
+    public String getCreateDate() {
+        return createDate;
     }
 
     public String getPhone() {
