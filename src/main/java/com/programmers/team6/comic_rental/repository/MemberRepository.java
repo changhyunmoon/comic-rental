@@ -74,7 +74,7 @@ public class MemberRepository {
                 long id = rs.getLong("member_id");
                 String name = rs.getString("name");
                 String phone = rs.getString("phoneNumber");
-                String createDate = rs.getTimestamp("createDate").toString();
+                String createDate = rs.getDate("createDate").toLocalDate().toString();
 
                 Member member = new Member();
                 member.setId(id);
