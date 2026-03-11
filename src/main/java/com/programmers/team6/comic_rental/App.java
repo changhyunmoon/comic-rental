@@ -4,8 +4,12 @@ import java.util.Scanner;
 
 import com.programmers.team6.comic_rental.controller.ComicController;
 import com.programmers.team6.comic_rental.controller.MemberController;
+import com.programmers.team6.comic_rental.controller.RentalController;
 import com.programmers.team6.comic_rental.repository.ComicRepository;
+import com.programmers.team6.comic_rental.repository.MemberRepository;
+import com.programmers.team6.comic_rental.repository.RentalRepository;
 import com.programmers.team6.comic_rental.service.ComicService;
+import com.programmers.team6.comic_rental.service.RentalService;
 
 /*
     명령어	        switch case
@@ -30,6 +34,11 @@ public class App {
     ComicService comicService = new ComicService(comicRepository);
     ComicController comicController = new ComicController(sc, comicService);
     MemberController memberController = new MemberController(sc);
+
+    // 대여 관련 객체 추가
+    RentalRepository rentalRepository = new RentalRepository();
+    RentalService rentalService = new RentalService(rentalRepository, comicRepository, new MemberRepository());
+    RentalController rentalController = new RentalController(rentalService);
 
     public void run() {   // run 루프
         while (true) {
@@ -89,15 +98,32 @@ public class App {
 
                 // 대여
                 case "rent":
-
+                    if (rq.getComicId() == 0 || rq.getMemberId() == 0) {
+                        System.out.println("사용법: rent [comicId] [memberId]");
+                        break;
+                    }
+                    rentalController.rentComic(rq.getComicId(), rq.getMemberId());
                     break;
 
                 case "return":
-
+                    if (rq.getRentalId() == 0) {
+                        System.out.println("사용법: return [rentalId]");
+                        break;
+                    }
+                    rentalController.returnComic(rq.getRentalId());
                     break;
 
                 case "rental-list":
-
+                    if (cmd.trim().equals("rental-list open")) {
+                        // 미반납만 출력
+                        rentalController.listRentals(true);
+                    } else if (cmd.trim().equals("rental-list overdue")) {
+                        // 연체 목록만 출력
+                        rentalController.listOverdueRentals();
+                    } else {
+                        // 전체 출력
+                        rentalController.listRentals(false);
+                    }
                     break;
 
                 // 종료
