@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MemberRepository {
-    private static final com.programmers.team6.comic_rental.repository.Dotenv dotenv = Dotenv.configure().load();;
+    private static final Dotenv dotenv = Dotenv.configure().load();;
 
     private static final String URL = dotenv.get("DB_URL");
     private static final String USER = dotenv.get("DB_USER");
