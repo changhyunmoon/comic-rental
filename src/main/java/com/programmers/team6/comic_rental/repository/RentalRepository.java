@@ -62,7 +62,7 @@ public class RentalRepository {
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setLong(1, rentalId);
-            return pstmt.executeUpdate() > 0;   // 업데이트된 행이 있으면 true
+            return pstmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
             throw new RuntimeException("returnRental 오류: " + e.getMessage(), e);
@@ -71,7 +71,6 @@ public class RentalRepository {
 
     /**
      * 특정 rental_id로 단건 조회
-     * 반납 여부 확인, 존재 여부 확인에 사용
      */
     public Rental findById(long rentalId) {
         String sql = """
@@ -95,7 +94,7 @@ public class RentalRepository {
             throw new RuntimeException("findById 오류: " + e.getMessage(), e);
         }
 
-        return null;    // 존재하지 않으면 null 반환
+        return null;
     }
 
     /**
@@ -123,6 +122,55 @@ public class RentalRepository {
                 """;
 
         return executeQuery(sql);
+    }
+
+    /**
+     * 연체 목록 조회
+     * 미반납(return_date IS NULL) + 대여일 기준 7일 초과
+     */
+    public List<Rental> findAllOverdue() {
+        String sql = """
+                SELECT rental_id, comic_id, member_id, rent_date, return_date, created_date, updated_date
+                FROM rental
+                WHERE return_date IS NULL
+                AND rent_date < DATE_SUB(NOW(), INTERVAL 7 DAY)
+                ORDER BY rental_id
+                """;
+
+        return executeQuery(sql);
+    }
+
+    /**
+     * 특정 회원의 미반납 대여 조회
+     * 연체 여부 확인에 사용
+     */
+    public List<Rental> findOpenByMemberId(long memberId) {
+        String sql = """
+                SELECT rental_id, comic_id, member_id, rent_date, return_date, created_date, updated_date
+                FROM rental
+                WHERE member_id = ?
+                AND return_date IS NULL
+                ORDER BY rental_id
+                """;
+
+        List<Rental> rentals = new ArrayList<>();
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setLong(1, memberId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    rentals.add(mapRow(rs));
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("findOpenByMemberId 오류: " + e.getMessage(), e);
+        }
+
+        return rentals;
     }
 
     // SQL 실행 + ResultSet → List<Rental> 변환 공통 메서드
@@ -154,7 +202,6 @@ public class RentalRepository {
         Timestamp rentDate = rs.getTimestamp("rent_date");
         if (rentDate != null) rental.setRentDate(rentDate.toLocalDateTime());
 
-        // return_date는 반납 전 NULL 가능 → null 체크 필수
         Timestamp returnDate = rs.getTimestamp("return_date");
         if (returnDate != null) rental.setReturnDate(returnDate.toLocalDateTime());
 

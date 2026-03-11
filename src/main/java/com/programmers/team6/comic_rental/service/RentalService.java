@@ -5,6 +5,7 @@ import com.programmers.team6.comic_rental.repository.ComicRepository;
 import com.programmers.team6.comic_rental.repository.MemberRepository;
 import com.programmers.team6.comic_rental.repository.RentalRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class RentalService {
@@ -24,8 +25,8 @@ public class RentalService {
     /**
      * 대여 처리
      * 1) comicId 존재 확인
-     * 2) memberId 존재 확인  ← MemberRepository에 existsById 없으면 아래 주석 참고
-     * 3) 이미 대여중인지 확인 (comic.is_rented == true)
+     * 2) 이미 대여중인지 확인
+     * 3) 연체중인 회원인지 확인 (반납 안 한 대여가 7일 초과면 대여 불가)
      * 4) rental INSERT + comic.is_rented = true UPDATE
      */
     public long rentComic(long comicId, long memberId) {
@@ -37,6 +38,11 @@ public class RentalService {
         // 이미 대여중인지 확인
         if (comicRepository.isRented(comicId)) {
             throw new IllegalStateException("이미 대여중인 만화책입니다. (comicId=" + comicId + ")");
+        }
+
+        // 연체중인 회원인지 확인 (7일 초과 미반납 대여 있으면 대여 불가)
+        if (hasOverdue(memberId)) {
+            throw new IllegalStateException("연체중인 대여가 있어 대여가 불가합니다. (memberId=" + memberId + ")");
         }
 
         // rental 행 INSERT → 생성된 rentalId 반환
@@ -51,8 +57,8 @@ public class RentalService {
     /**
      * 반납 처리
      * 1) rentalId 존재 확인
-     * 2) 이미 반납된 건인지 확인 (return_date != null)
-     * 3) rental.return_date = NOW() UPDATE + comic.is_rented = false UPDATE
+     * 2) 이미 반납된 건인지 확인
+     * 3) rental.return_date = NOW() + comic.is_rented = false
      */
     public void returnComic(long rentalId) {
         Rental rental = rentalRepository.findById(rentalId);
@@ -86,5 +92,29 @@ public class RentalService {
      */
     public List<Rental> getOpenRentals() {
         return rentalRepository.findAllOpen();
+    }
+
+    /**
+     * 연체 목록 조회 (대여일 + 7일 초과 && 미반납)
+     */
+    public List<Rental> getOverdueRentals() {
+        return rentalRepository.findAllOverdue();
+    }
+
+    /**
+     * 특정 회원의 연체 여부 확인
+     * 미반납 대여 중 rent_date 기준 7일 초과된 건이 있으면 true
+     */
+    private boolean hasOverdue(long memberId) {
+        List<Rental> openRentals = rentalRepository.findOpenByMemberId(memberId);
+
+        LocalDateTime now = LocalDateTime.now();
+        for (Rental rental : openRentals) {
+            // 대여일 + 7일 이 현재시각보다 이전이면 연체
+            if (rental.getRentDate().plusDays(7).isBefore(now)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
