@@ -7,41 +7,46 @@ public class Rq {
     private long memberId;
 
     public Rq(String command) {
-        String[] bits = command.split(" ");
-    /*
-        스페이스 단위로 배열에 넣음(예시 명령어 기반)
-        ex) rent 3 1 시
-        bits[0] = rent
-        bits[1] = 3
-        bits[2] = 1
-     */
+
+        String[] bits = command.trim().split("\\s+");
+
+        if(bits.length == 0) {
+            throw new IllegalArgumentException("명령어가 비어 있습니다.");
+        }
+
         this.actionPath = bits[0].toLowerCase();
 
+        // comic 관련 명령
         if((actionPath.equals("comic-detail") ||
                 actionPath.equals("comic-update") ||
                 actionPath.equals("comic-delete"))
                 && bits.length >= 2) {
+
             try {
-                comicId = Long.parseLong(bits[1]);        // comic_id 값 가져옴
+                comicId = Long.parseLong(bits[1]);
             } catch (NumberFormatException e) {
-                System.out.println("comicId는 숫자를 입력해야 합니다.");
+                throw new IllegalArgumentException("comicId는 숫자를 입력해야 합니다.");
             }
         }
 
+        // 대여
         if(actionPath.equals("rent") && bits.length >= 3) {
+
             try {
                 comicId = Long.parseLong(bits[1]);
                 memberId = Long.parseLong(bits[2]);
             } catch (NumberFormatException e) {
-                System.out.println("comicId와 memberId는 숫자를 입력해야 합니다.");
+                throw new IllegalArgumentException("comicId와 memberId는 숫자를 입력해야 합니다.");
             }
         }
 
+        // 반납
         if(actionPath.equals("return") && bits.length >= 2) {
+
             try {
-                rentalId = Long.parseLong(bits[1]);      // rentalId 값 가져옴
+                rentalId = Long.parseLong(bits[1]);
             } catch (NumberFormatException e) {
-                System.out.println("rentalId는 숫자를 입력해야 합니다.");
+                throw new IllegalArgumentException("rentalId는 숫자를 입력해야 합니다.");
             }
         }
     }
@@ -50,6 +55,4 @@ public class Rq {
     public long getComicId() { return comicId; }
     public long getMemberId() { return memberId; }
     public long getRentalId() { return rentalId; }
-
 }
-

@@ -1,6 +1,5 @@
 package com.programmers.team6.comic_rental.repository;
 
-import com.mysql.cj.x.protobuf.MysqlxPrepare;
 import com.programmers.team6.comic_rental.entity.Member;
 import io.github.cdimascio.dotenv.Dotenv;
 import java.sql.*;
@@ -35,7 +34,7 @@ public class MemberRepository {
 
     // 특정 회원 조회
     public void findById(long id){
-        String sql = "SELECT * FROM member WHERE user_id = ?";
+        String sql = "SELECT * FROM member WHERE member_id = ?";
         try(Connection conn = DBUtil.getConnection();
             PreparedStatement pstmt = conn.prepareStatement(sql)){
             pstmt.setLong(1, id);
@@ -83,7 +82,7 @@ public class MemberRepository {
 
     // 회원정보 업데이트
     public int update(long id, String name, String phone){
-        String sql = "UPDATE member SET name = ?, phoneNumber = ? WHERE id = ?";
+        String sql = "UPDATE member SET name = ?, phoneNumber = ? WHERE member_id = ?";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, name);
@@ -96,7 +95,7 @@ public class MemberRepository {
 
     // 회원 삭제
     public int delete(long id) {
-        String sql = "DELETE FROM member WHERE id = ?";
+        String sql = "DELETE FROM member WHERE member_id = ?";
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setLong(1, id);

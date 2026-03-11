@@ -34,7 +34,7 @@ public class App {
     ComicController comicController = new ComicController(sc, comicService);
     MemberController memberController = new MemberController(sc);
     RentalRepository rentalRepository = new RentalRepository();
-    RentalService rentalService = new RentalService(rentalRepository);
+    RentalService rentalService = new RentalService(new RentalRepository(), new ComicRepository());
     RentalController rentalController = new RentalController(rentalService);
 
     public void run() {   // run 루프
@@ -142,7 +142,6 @@ public class App {
         System.out.println("    comic-detail [id]        │ 만화책 상세                ");
         System.out.println("    comic-update [id]        │ 만화책 수정                ");
         System.out.println("    comic-delete [id]        │ 만화책 삭제                ");
-        System.out.println("    comic-search [키워드]     │ 제목/작가 검색              ");
         System.out.println("  ├──────────────────────────┼──────────────────────────┤");
         System.out.println("    member-add               │ 회원 등록                  ");
         System.out.println("    member-list              │ 회원 목록                  ");

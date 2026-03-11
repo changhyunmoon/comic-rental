@@ -165,10 +165,11 @@ public class ComicRepository {
 
     public boolean updateRentalStatus(long comicId, boolean rented) {
         String sql = """
-                UPDATE comic
-                SET is_rented = ?, updated_date = NOW()
-                WHERE comic_id = ?
-                """;
+            UPDATE comic
+            SET is_rented = ?, updated_date = NOW()
+            WHERE comic_id = ?
+            AND is_rented = false
+            """;
 
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {

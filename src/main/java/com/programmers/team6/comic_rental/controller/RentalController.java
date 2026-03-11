@@ -12,6 +12,7 @@ public class RentalController {
 
     private final RentalService rentalService;
 
+
     // 날짜 포맷 (콘솔 출력용)
     private static final DateTimeFormatter formatter =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
