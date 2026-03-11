@@ -20,4 +20,5 @@ public class ComicApplication {
 		App app = new App();
 		app.run();
 	}
+	//test
 }
