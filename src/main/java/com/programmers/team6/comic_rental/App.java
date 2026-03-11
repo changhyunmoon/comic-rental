@@ -6,6 +6,9 @@ import com.programmers.team6.comic_rental.controller.ComicController;
 import com.programmers.team6.comic_rental.controller.MemberController;
 import com.programmers.team6.comic_rental.repository.ComicRepository;
 import com.programmers.team6.comic_rental.service.ComicService;
+import com.programmers.team6.comic_rental.controller.RentalController;
+import com.programmers.team6.comic_rental.service.RentalService;
+import com.programmers.team6.comic_rental.repository.RentalRepository;
 
 /*
     명령어	        switch case
@@ -30,84 +33,128 @@ public class App {
     ComicService comicService = new ComicService(comicRepository);
     ComicController comicController = new ComicController(sc, comicService);
     MemberController memberController = new MemberController(sc);
+    RentalRepository rentalRepository = new RentalRepository();
+    RentalService rentalService = new RentalService(rentalRepository);
+    RentalController rentalController = new RentalController(rentalService);
 
     public void run() {   // run 루프
+        printBanner();
         while (true) {
-            System.out.print("명령어: ");
-            String cmd = sc.nextLine();
+            try {
+                System.out.print("명령어: ");
+                String cmd = sc.nextLine();
 
-            if (cmd.isEmpty()) {
-                System.out.println("명령어를 입력해주세요.");
-                continue;
-            }
+                if (cmd.isEmpty()) {
+                    System.out.println("명령어를 입력해주세요.(help 입력)");
+                    continue;
+                }
 
-            Rq rq = new Rq(cmd);        // 명령어 파싱 객체
+                Rq rq = new Rq(cmd);        // 명령어 파싱 객체
 
-            switch (rq.getActionPath()) {
+                switch (rq.getActionPath()) {
 
-                // 만화책
-                case "comic-add":
-                    comicController.addComic();
-                    break;
-
-                case "comic-list":
-                    comicController.listComics();
-                    break;
-
-                case "comic-detail":
-                    if (rq.getComicId() == 0) {
-                        System.out.println("사용법: comic-detail [id]");
+                    // 만화책
+                    case "comic-add":
+                        comicController.addComic();
                         break;
-                    }
-                    comicController.detailComic(rq.getComicId());
-                    break;
 
-                case "comic-update":
-                    if (rq.getComicId() == 0) {
-                        System.out.println("사용법: comic-update [id]");
+                    case "comic-list":
+                        comicController.listComics();
                         break;
-                    }
-                    comicController.updateComic(rq.getComicId());
-                    break;
 
-                case "comic-delete":
-                    if (rq.getComicId() == 0) {
-                        System.out.println("사용법: comic-delete [id]");
+                    case "comic-detail":
+                        comicController.detailComic(rq.getComicId());
                         break;
-                    }
-                    comicController.deleteComic(rq.getComicId());
-                    break;
 
-                // 회원
-                case "member-add":
-                    memberController.addMember();
-                    break;
+                    case "comic-update":
+                        comicController.updateComic(rq.getComicId());
+                        break;
 
-                case "member-list":
-                    memberController.findAllMembers();
-                    break;
+                    case "comic-delete":
+                        comicController.deleteComic(rq.getComicId());
+                        break;
 
-                // 대여
-                case "rent":
+                    // 회원
+                    case "member-add":
+                        memberController.addMember();
+                        break;
 
-                    break;
+                    case "member-list":
+                        memberController.findAllMembers();
+                        break;
 
-                case "return":
+                    // 대여
+                    case "rent":
+                        rentalController.rentComic(rq.getComicId(), rq.getMemberId());
+                        break;
 
-                    break;
+                    case "return":
+                        rentalController.returnComic(rq.getRentalId());
+                        break;
 
-                case "rental-list":
+                    case "rental-list":
+                        rentalController.listRentals(false);
+                        break;
 
-                    break;
+                    case "rental-list open":
+                        rentalController.listRentals(true);
+                        break;
 
-                // 종료
-                case "exit":
-                    System.out.println("프로그램을 종료합니다.");
-                    return;
+                    case "rental-overdue":
+                        rentalController.listOverdueRentals();
+                        break;
 
-                default:
-                    System.out.println("존재하지 않는 명령어입니다.");
+                    case "help":
+                        printHelp();
+                        break;
+
+                    // 종료
+                    case "exit":
+                        System.out.println("\uD83D\uDCDA 만화책 대여점 시스템을 종료합니다.\n" +
+                                "이용해주셔서 감사합니다.");
+                        return;
+
+                    default:
+                        System.out.println("존재하지 않는 명령어입니다. (help 입력)");
+                }
+            } catch (Exception e) {
+                System.out.println("명령 처리 중 오류가 발생했습니다.");
+                System.out.println("입력값을 확인해주세요.");
             }
         }
+    }
+
+    //유틸
+    private void printBanner() {
+        System.out.println("╔══════════════════════════════════════╗");
+        System.out.println("║      📚 만화책 대여점 시스템            ║");
+        System.out.println("╚══════════════════════════════════════╝");
+        System.out.println("  'help' 를 입력하면 명령어 목록을 볼 수 있습니다.");
+    }
+
+    private void printHelp() {
+        System.out.println();
+        System.out.println("  ┌────────────────────────────────────────────────────┐");
+        System.out.println("                     명령어 목록                         ");
+        System.out.println("  ├──────────────────────────┬─────────────────────────┤");
+        System.out.println("    comic-add                │ 만화책 등록                ");
+        System.out.println("    comic-list               │ 만화책 목록                ");
+        System.out.println("    comic-detail [id]        │ 만화책 상세                ");
+        System.out.println("    comic-update [id]        │ 만화책 수정                ");
+        System.out.println("    comic-delete [id]        │ 만화책 삭제                ");
+        System.out.println("    comic-search [키워드]     │ 제목/작가 검색              ");
+        System.out.println("  ├──────────────────────────┼──────────────────────────┤");
+        System.out.println("    member-add               │ 회원 등록                  ");
+        System.out.println("    member-list              │ 회원 목록                  ");
+        System.out.println("  ├──────────────────────────┼──────────────────────────┤");
+        System.out.println("    rent [comicId] [memberId]│ 대여                       ");
+        System.out.println("    return [rentalId]        │ 반납                       ");
+        System.out.println("    rental-list              │ 전체 대여 목록             ");
+        System.out.println("    rental-list open         │ 미반납 목록                ");
+        System.out.println("    rental-overdue           │ 연체 목록 (7일 초과)       ");
+        System.out.println("  ├──────────────────────────┼──────────────────────────┤");
+        System.out.println("    help                     │ 도움말                     ");
+        System.out.println("    exit                     │ 종료                       ");
+        System.out.println("  └──────────────────────────┴──────────────────────────┘");
     }
 }

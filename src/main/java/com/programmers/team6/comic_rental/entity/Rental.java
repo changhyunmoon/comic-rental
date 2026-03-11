@@ -1,29 +1,30 @@
 package com.programmers.team6.comic_rental.entity;
 
-
 import java.time.LocalDateTime;
 
 public class Rental {
+
     private long rentalId;
     private long comicId;
     private long memberId;
     private LocalDateTime rentDate;
-    private LocalDateTime returnDate;   // null이면 아직 반납 안 된 상태
+    private LocalDateTime returnDate;
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
 
     public Rental() {}
 
-    public Rental(long rentalId, long comicId, long memberId,
-                  LocalDateTime rentDate, LocalDateTime returnDate,
-                  LocalDateTime createdDate, LocalDateTime updatedDate) {
-        this.rentalId = rentalId;
+    // 대여 생성용 생성자
+    public Rental(long comicId, long memberId) {
         this.comicId = comicId;
         this.memberId = memberId;
-        this.rentDate = rentDate;
-        this.returnDate = returnDate;
-        this.createdDate = createdDate;
-        this.updatedDate = updatedDate;
+        this.rentDate = LocalDateTime.now();
+        this.createdDate = LocalDateTime.now();
+        this.updatedDate = LocalDateTime.now();
+    }
+
+    public boolean isReturned() {
+        return returnDate != null;
     }
 
     public long getRentalId() { return rentalId; }
@@ -46,7 +47,4 @@ public class Rental {
 
     public LocalDateTime getUpdatedDate() { return updatedDate; }
     public void setUpdatedDate(LocalDateTime updatedDate) { this.updatedDate = updatedDate; }
-
-    // 반납 여부 편의 메서드 (returnDate가 null이면 미반납)
-    public boolean isReturned() { return returnDate != null; }
 }

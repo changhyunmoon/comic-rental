@@ -6,17 +6,9 @@ import io.github.cdimascio.dotenv.Dotenv;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import com.programmers.team6.comic_rental.util.DBUtil;
 
 public class RentalRepository {
-
-    private static final Dotenv dotenv = Dotenv.configure().load();
-    private static final String URL = dotenv.get("DB_URL");
-    private static final String USER = dotenv.get("DB_USER");
-    private static final String PASSWORD = dotenv.get("DB_PASS");
-
-    private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USER, PASSWORD);
-    }
 
     /**
      * 대여 등록 - rental 테이블에 새 행 INSERT
@@ -28,7 +20,7 @@ public class RentalRepository {
                 VALUES (?, ?, NOW(), NULL, NOW(), NOW())
                 """;
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             pstmt.setLong(1, comicId);
@@ -58,7 +50,7 @@ public class RentalRepository {
                 WHERE rental_id = ?
                 """;
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setLong(1, rentalId);
@@ -79,7 +71,7 @@ public class RentalRepository {
                 WHERE rental_id = ?
                 """;
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setLong(1, rentalId);
@@ -155,7 +147,7 @@ public class RentalRepository {
 
         List<Rental> rentals = new ArrayList<>();
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setLong(1, memberId);
@@ -177,7 +169,7 @@ public class RentalRepository {
     private List<Rental> executeQuery(String sql) {
         List<Rental> rentals = new ArrayList<>();
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
 
@@ -212,5 +204,32 @@ public class RentalRepository {
         if (updated != null) rental.setUpdatedDate(updated.toLocalDateTime());
 
         return rental;
+    }
+
+    public boolean isComicRented(long comicId) {
+
+        String sql = """
+        SELECT COUNT(*)
+        FROM rental
+        WHERE comic_id = ?
+        AND return_date IS NULL
+    """;
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setLong(1, comicId);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if(rs.next()){
+                return rs.getInt(1) > 0;
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return false;
     }
 }
