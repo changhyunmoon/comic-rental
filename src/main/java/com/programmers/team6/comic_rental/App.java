@@ -4,7 +4,10 @@ import java.util.Scanner;
 
 import com.programmers.team6.comic_rental.controller.ComicController;
 import com.programmers.team6.comic_rental.controller.MemberController;
+import com.programmers.team6.comic_rental.controller.RentalController;
 import com.programmers.team6.comic_rental.repository.ComicRepository;
+import com.programmers.team6.comic_rental.repository.MemberRepository;
+import com.programmers.team6.comic_rental.repository.RentalRepository;
 import com.programmers.team6.comic_rental.service.ComicService;
 import com.programmers.team6.comic_rental.controller.RentalController;
 import com.programmers.team6.comic_rental.service.RentalService;
@@ -35,6 +38,11 @@ public class App {
     MemberController memberController = new MemberController(sc);
     RentalRepository rentalRepository = new RentalRepository();
     RentalService rentalService = new RentalService(new RentalRepository(), new ComicRepository());
+    RentalController rentalController = new RentalController(rentalService);
+
+    // 대여 관련 객체 추가
+    RentalRepository rentalRepository = new RentalRepository();
+    RentalService rentalService = new RentalService(rentalRepository, comicRepository, new MemberRepository());
     RentalController rentalController = new RentalController(rentalService);
 
     public void run() {   // run 루프
