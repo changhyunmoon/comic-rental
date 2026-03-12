@@ -136,7 +136,6 @@ ComicApplication.java
 | `rent [cId] [mId]` | 만화 대여 (cId: 만화 ID, mId: 회원 ID) |
 | `return [rentalId]` | 만화 반납 (rentalId: 대여 번호) |
 | `rental-list` | 전체 대여 목록 조회 |
-| `rental-list open` | 미반납 목록 조회 |
 | `rental-overdue` | 연체 목록 조회 (7일 초과) |
 | `help` | 사용 가능한 명령어 목록 안내 |
 | `exit` | 프로그램 종료 |
@@ -182,6 +181,7 @@ ComicApplication.java
 -   CLI 기반이라 사용자 인터페이스가 제한적
 -   예외 처리 로직을 더 보완할 필요
 -   테스트 코드 추가 필요
+
 
 
 
