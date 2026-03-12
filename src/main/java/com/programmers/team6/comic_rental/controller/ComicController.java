@@ -18,19 +18,26 @@ public class ComicController {
 
     public void addComic() {
         try {
-            System.out.print("제목(예: 원피스1): ");
+            System.out.print("제목: ");
             String title = scanner.nextLine();
+
+            System.out.print("권수: ");
+            String volume = scanner.nextLine();
 
             System.out.print("작가: ");
             String author = scanner.nextLine();
 
-            long id = comicService.addComic(title, author);
+            // DB에는 기존 구조 유지 (title + volume)
+            String fullTitle = title + volume;
+
+            long id = comicService.addComic(fullTitle, author);
+
             System.out.println("=> 만화책이 등록되었습니다. (id=" + id + ")");
+
         } catch (Exception e) {
             System.out.println("등록 실패: " + e.getMessage());
         }
     }
-
     public void listComics() {
         try {
             List<Comic> comics = comicService.getAllComics();
@@ -40,13 +47,13 @@ public class ComicController {
                 return;
             }
 
-            System.out.println("번호 | 제목 | 권수 | 작가 | 상태");
-            System.out.println("------------------------------------------------");
+            System.out.printf("%-4s | %-13s | %-6s | %-10s | %-8s%n", "번호", "제목", "권수", "작가", "상태");
+            System.out.println("---------------------------------------------------------------");
 
             for (Comic comic : comics) {
                 String[] parsed = splitTitleAndVolume(comic.getTitle());
 
-                System.out.printf("%d | %s | %s | %s | %s%n",
+                System.out.printf("%-5d | %-12s | %-6s | %-10s | %-8s%n",
                         comic.getComicId(),
                         parsed[0],
                         parsed[1].isEmpty() ? "-" : parsed[1],
@@ -90,21 +97,30 @@ public class ComicController {
                 return;
             }
 
-            System.out.println("현재 제목: " + comic.getTitle());
-            System.out.print("새 제목(예: 원피스2): ");
+            String[] parsed = splitTitleAndVolume(comic.getTitle());
+
+            System.out.println("현재 제목: " + parsed[0]);
+            System.out.print("새 제목: ");
             String newTitle = scanner.nextLine();
+
+            System.out.println("현재 권수: " + parsed[1]);
+            System.out.print("새 권수: ");
+            String newVolume = scanner.nextLine();
 
             System.out.println("현재 작가: " + comic.getAuthor());
             System.out.print("새 작가: ");
             String newAuthor = scanner.nextLine();
 
-            boolean result = comicService.updateComic(comicId, newTitle, newAuthor);
+            String fullTitle = newTitle + newVolume;
+
+            boolean result = comicService.updateComic(comicId, fullTitle, newAuthor);
 
             if (result) {
                 System.out.println("=> 만화책이 수정되었습니다.");
             } else {
                 System.out.println("=> 수정 실패");
             }
+
         } catch (Exception e) {
             System.out.println("수정 실패: " + e.getMessage());
         }

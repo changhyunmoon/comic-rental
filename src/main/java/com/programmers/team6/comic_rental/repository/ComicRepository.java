@@ -6,17 +6,9 @@ import io.github.cdimascio.dotenv.Dotenv;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import com.programmers.team6.comic_rental.util.DBUtil;
 
 public class ComicRepository {
-    private static final Dotenv dotenv = Dotenv.configure().load();;
-
-    private static final String URL = dotenv.get("DB_URL");
-    private static final String USER = dotenv.get("DB_USER");
-    private static final String PASSWORD = dotenv.get("DB_PASS");
-
-    private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USER, PASSWORD);
-    }
 
     public long save(String title, String author) {
         String sql = """
@@ -24,7 +16,7 @@ public class ComicRepository {
                 VALUES (?, ?, false, NOW(), NOW())
                 """;
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             pstmt.setString(1, title);
@@ -58,7 +50,7 @@ public class ComicRepository {
 
         List<Comic> comics = new ArrayList<>();
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
 
@@ -80,7 +72,7 @@ public class ComicRepository {
                 WHERE comic_id = ?
                 """;
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setLong(1, comicId);
@@ -105,7 +97,7 @@ public class ComicRepository {
                 WHERE comic_id = ?
                 """;
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, title);
@@ -122,7 +114,7 @@ public class ComicRepository {
     public boolean delete(long comicId) {
         String sql = "DELETE FROM comic WHERE comic_id = ?";
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setLong(1, comicId);
@@ -136,7 +128,7 @@ public class ComicRepository {
     public boolean existsById(long comicId) {
         String sql = "SELECT 1 FROM comic WHERE comic_id = ?";
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setLong(1, comicId);
@@ -153,7 +145,7 @@ public class ComicRepository {
     public boolean isRented(long comicId) {
         String sql = "SELECT is_rented FROM comic WHERE comic_id = ?";
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setLong(1, comicId);
@@ -173,12 +165,13 @@ public class ComicRepository {
 
     public boolean updateRentalStatus(long comicId, boolean rented) {
         String sql = """
-                UPDATE comic
-                SET is_rented = ?, updated_date = NOW()
-                WHERE comic_id = ?
-                """;
+            UPDATE comic
+            SET is_rented = ?, updated_date = NOW()
+            WHERE comic_id = ?
+            AND is_rented = false
+            """;
 
-        try (Connection conn = getConnection();
+        try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setBoolean(1, rented);
