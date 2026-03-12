@@ -36,13 +36,11 @@ public class App {
     ComicService comicService = new ComicService(comicRepository);
     ComicController comicController = new ComicController(sc, comicService);
     MemberController memberController = new MemberController(sc);
-    RentalRepository rentalRepository = new RentalRepository();
-    RentalService rentalService = new RentalService(new RentalRepository(), new ComicRepository());
-    RentalController rentalController = new RentalController(rentalService);
+
 
     // 대여 관련 객체 추가
     RentalRepository rentalRepository = new RentalRepository();
-    RentalService rentalService = new RentalService(rentalRepository, comicRepository, new MemberRepository());
+    RentalService rentalService = new RentalService(rentalRepository, comicRepository);
     RentalController rentalController = new RentalController(rentalService);
 
     public void run() {   // run 루프
