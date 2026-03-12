@@ -1,5 +1,5 @@
 package com.programmers.team6.comic_rental;
-
+//test
 import java.util.Scanner;
 
 import com.programmers.team6.comic_rental.controller.ComicController;
