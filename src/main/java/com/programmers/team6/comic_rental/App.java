@@ -102,10 +102,6 @@ public class App {
                         rentalController.listRentals(false);
                         break;
 
-                    case "rental-list open":
-                        rentalController.listRentals(true);
-                        break;
-
                     case "rental-overdue":
                         rentalController.listOverdueRentals();
                         break;
@@ -155,7 +151,6 @@ public class App {
         System.out.println("    rent [comicId] [memberId]│ 대여                       ");
         System.out.println("    return [rentalId]        │ 반납                       ");
         System.out.println("    rental-list              │ 전체 대여 목록             ");
-        System.out.println("    rental-list open         │ 미반납 목록                ");
         System.out.println("    rental-overdue           │ 연체 목록 (7일 초과)       ");
         System.out.println("  ├──────────────────────────┼──────────────────────────┤");
         System.out.println("    help                     │ 도움말                     ");
